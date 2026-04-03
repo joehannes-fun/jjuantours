@@ -48,9 +48,9 @@ const Home: React.FC = () => {
     <div id="top">
       <Hero backgroundImage={HERO_BACKGROUND_IMAGE} />
 
-      <section className="py-20">
+      <section className="py-24">
         <div className="section-shell text-center">
-          <h2 className="mb-4 text-5xl font-bold text-slate-900">
+          <h2 className="mb-4 text-5xl font-bold text-slate-900 md:text-6xl">
             <FormattedMessage id="tours.title" />
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-lg text-slate-600">
