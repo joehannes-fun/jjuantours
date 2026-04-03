@@ -1,0 +1,285 @@
+import { tours as staticTours } from '../data/tours';
+import { transportServices as staticTransportServices } from '../data/transportServices';
+
+const JSONBIN_MASTER_KEY = import.meta.env.VITE_JSONBIN_MASTER_KEY;
+const JSONBIN_TOURS_EN_BIN_ID = import.meta.env.VITE_JSONBIN_TOURS_EN;
+const JSONBIN_TOURS_ES_BIN_ID = import.meta.env.VITE_JSONBIN_TOURS_ES;
+const JSONBIN_TRANSPORT_EN_BIN_ID = import.meta.env.VITE_JSONBIN_TRANSPORT_EN;
+const JSONBIN_TRANSPORT_ES_BIN_ID =
+  import.meta.env.VITE_JSONBIN_TRANSPORT || import.meta.env.VITE_JSONBIN_TRANSPORT_ES;
+
+const JSONBIN_EXAMPLETESTOURS_EN_BIN_ID =
+  import.meta.env.VITE_JSONBIN_EXAMPLETESTOURS_EN_BIN_ID;
+const JSONBIN_EXAMPLETESTOURS_ES_BIN_ID =
+  import.meta.env.VITE_JSONBIN_EXAMPLETESTOURS_ES_BIN_ID;
+
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+type Locale = 'en' | 'es';
+export type ServiceCategory = 'tours' | 'transport';
+
+interface RawPricingTier {
+  tier?: string;
+  price?: string;
+}
+
+interface RawImage {
+  role?: string;
+  localPath?: string;
+}
+
+interface RawService {
+  id?: number;
+  title?: string;
+  description?: string;
+  price?: string;
+  pricing?: RawPricingTier[];
+  images?: RawImage[];
+  image?: string;
+}
+
+export interface PricingOption {
+  tier: string;
+  price: string;
+  amount: number | null;
+}
+
+export interface ServiceDetails {
+  description: string;
+  images: string[];
+}
+
+export interface Tour {
+  id: number;
+  image: string;
+  title: string;
+  description: string;
+  price: string;
+  pricingOptions: PricingOption[];
+  details: ServiceDetails;
+}
+
+const extractAmountFromPrice = (price: string): number | null => {
+  const normalizedPrice = String(price ?? '').replace(/[^\d.]/g, '');
+  const numericValue = Number(normalizedPrice);
+  return Number.isFinite(numericValue) && numericValue > 0 ? numericValue : null;
+};
+
+const normalizeImagePath = (input: string): string => {
+  if (!input) {
+    return '';
+  }
+
+  if (/^https?:\/\//.test(input)) {
+    return input;
+  }
+
+  return input.startsWith('/') ? input : `/${input}`;
+};
+
+const toLocalPath = (input: string): string =>
+  /^https?:\/\//.test(input) ? input : input.replace(/^\//, '');
+
+const slugify = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+
+const normalizePricingOptions = (
+  raw: RawService,
+  category: ServiceCategory,
+  locale: Locale
+): PricingOption[] => {
+  const rawPricing = Array.isArray(raw.pricing) ? raw.pricing : [];
+
+  if (rawPricing.length > 0) {
+    return rawPricing.map((item, index) => ({
+      tier: item.tier?.trim() || `${locale === 'es' ? 'Opción' : 'Option'} ${index + 1}`,
+      price: item.price?.trim() || '',
+      amount: extractAmountFromPrice(item.price?.trim() || ''),
+    }));
+  }
+
+  const fallbackTier = category === 'transport' ? 'People' : 'Adults';
+  const fallbackPrice = String(raw.price ?? '').trim();
+
+  return fallbackPrice
+    ? [{ tier: fallbackTier, price: fallbackPrice, amount: extractAmountFromPrice(fallbackPrice) }]
+    : [];
+};
+
+const normalizeService = (
+  rawService: RawService,
+  index: number,
+  category: ServiceCategory,
+  locale: Locale
+): Tour => {
+  const detailImages = Array.isArray(rawService.images)
+    ? rawService.images
+        .map((image) => normalizeImagePath(String(image.localPath ?? '').trim()))
+        .filter(Boolean)
+    : [];
+  const pricingOptions = normalizePricingOptions(rawService, category, locale);
+  const fallbackImage = normalizeImagePath(String(rawService.image ?? '').trim());
+  const image = detailImages[0] || fallbackImage || '/imgs/placeholder.jpg';
+  const price = pricingOptions[0]?.price || String(rawService.price ?? '').trim();
+  const title = String(rawService.title ?? '').trim();
+  const description = String(rawService.description ?? '').trim();
+
+  return {
+    id: Number(rawService.id ?? index + 1),
+    image,
+    title,
+    description,
+    price,
+    pricingOptions,
+    details: {
+      description,
+      images: detailImages.length > 0 ? detailImages : [image],
+    },
+  };
+};
+
+const normalizeServices = (
+  services: unknown,
+  fallback: Tour[],
+  category: ServiceCategory,
+  locale: Locale
+): Tour[] => {
+  if (!Array.isArray(services)) {
+    return fallback;
+  }
+
+  return services.map((service, index) => normalizeService(service as RawService, index, category, locale));
+};
+
+const resolveToursBinId = (locale: Locale) =>
+  locale === 'es' ? JSONBIN_TOURS_ES_BIN_ID : JSONBIN_TOURS_EN_BIN_ID;
+
+const resolveTransportBinId = (locale: Locale) =>
+  locale === 'es' ? JSONBIN_TRANSPORT_ES_BIN_ID : JSONBIN_TRANSPORT_EN_BIN_ID;
+
+const resolveExampleToursBinId = (locale: Locale) =>
+  locale === 'es' ? JSONBIN_EXAMPLETESTOURS_ES_BIN_ID : JSONBIN_EXAMPLETESTOURS_EN_BIN_ID;
+
+const fetchServices = async (
+  binId: string | undefined,
+  fallback: Tour[],
+  category: ServiceCategory,
+  locale: Locale,
+  allowFallback: boolean
+): Promise<Tour[]> => {
+  if (!binId) {
+    return allowFallback ? fallback : [];
+  }
+
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_MASTER_KEY },
+      cache: 'no-cache',
+    });
+
+    const data = await response.json();
+    return normalizeServices(data.record?.record || data.record || [], fallback, category, locale);
+  } catch (error) {
+    console.error('Failed to fetch services:', error);
+    return allowFallback ? fallback : [];
+  }
+};
+
+export const getExampleTours = async (locale: Locale): Promise<Tour[]> =>
+  fetchServices(resolveExampleToursBinId(locale), staticTours, 'tours', locale, true);
+
+export const getTours = async (locale: Locale): Promise<Tour[]> =>
+  fetchServices(resolveToursBinId(locale), [], 'tours', locale, false);
+
+export const getTransportServices = async (locale: Locale): Promise<Tour[]> =>
+  fetchServices(resolveTransportBinId(locale), [], 'transport', locale, false);
+
+export const getServicesByCategory = async (
+  category: ServiceCategory,
+  locale: Locale
+): Promise<Tour[]> =>
+  category === 'transport' ? getTransportServices(locale) : getTours(locale);
+
+const serializeToursForSave = (services: Tour[]): RawService[] =>
+  services.map((service) => ({
+    title: service.title,
+    description: service.description,
+    pricing: service.pricingOptions.map((option) => ({ tier: option.tier, price: option.price })),
+    images: service.details.images.map((image, index) => ({
+      role: `detail_${index + 1}`,
+      localPath: toLocalPath(image),
+    })),
+  }));
+
+const serializeTransportForSave = (services: Tour[]): RawService[] =>
+  services.map((service) => ({
+    title: service.title,
+    description: service.description,
+    price: service.pricingOptions[0]?.price || service.price,
+    images: service.details.images.map((image, index) => ({
+      role: `detail_${index + 1}`,
+      localPath: toLocalPath(image),
+    })),
+  }));
+
+export const saveTours = async (tours: Tour[], locale: Locale): Promise<void> => {
+  await fetch(`https://api.jsonbin.io/v3/b/${resolveToursBinId(locale)}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_MASTER_KEY,
+    },
+    body: JSON.stringify(serializeToursForSave(tours)),
+  });
+};
+
+export const saveTransportServices = async (services: Tour[], locale: Locale): Promise<void> => {
+  await fetch(`https://api.jsonbin.io/v3/b/${resolveTransportBinId(locale)}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_MASTER_KEY,
+    },
+    body: JSON.stringify(serializeTransportForSave(services)),
+  });
+};
+
+export const uploadImage = async (file: File): Promise<string> => {
+  const formData = new FormData();
+
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('folder', 'tours');
+
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    const data = await response.json();
+
+    if (!data.secure_url) {
+      throw new Error('Cloudinary upload failed');
+    }
+
+    return data.secure_url;
+  } catch (error) {
+    console.error('Image upload failed:', error);
+    return 'https://dummyimage.com/600x600/cccccc/000000&text=Upload+Failed';
+  }
+};
+
+export const getServiceSlug = (service: Pick<Tour, 'title' | 'id'>): string => {
+  const slug = slugify(service.title);
+  return slug ? `${service.id}-${slug}` : String(service.id);
+};

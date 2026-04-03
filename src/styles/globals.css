@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #11243a;
+  --ink-soft: #36506e;
+  --sand: #f6f2e8;
+  --sun: #f3b34c;
+  --palm: #177e72;
+  --ocean: #0f5b83;
+  --card: rgba(255, 255, 255, 0.9);
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(243, 179, 76, 0.24), transparent 45%),
+    radial-gradient(circle at 75% 10%, rgba(23, 126, 114, 0.16), transparent 40%),
+    linear-gradient(180deg, #fdfbf7 0%, #f4f8fc 50%, #eef4fb 100%);
+  color: var(--ink);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-lobster {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-shadow: none;
+}
+
+a {
+  color: var(--ocean);
+  transition: all 0.25s ease;
+}
+
+a:hover {
+  color: var(--palm);
+}
+
+button {
+  border-radius: 9999px;
+}
+
+.section-shell {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.glass-card {
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(17, 36, 58, 0.08);
+  box-shadow: 0 20px 45px rgba(17, 36, 58, 0.12);
+}
+
+.tropical-button {
+  @apply inline-flex items-center justify-center font-semibold py-3 px-6 rounded-full;
+  background: linear-gradient(120deg, var(--ocean), var(--palm));
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 91, 131, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.tropical-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(23, 126, 114, 0.3);
+}
+
+.tropical-button-outline {
+  @apply inline-flex items-center justify-center font-semibold py-3 px-6 rounded-full;
+  border: 2px solid var(--ocean);
+  color: var(--ocean);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.tropical-button-outline:hover {
+  border-color: var(--palm);
+  color: var(--palm);
+  background: #ffffff;
+}

@@ -1,0 +1,113 @@
+{
+  "nav": {
+    "home": "Home",
+    "tours": "Tours",
+    "contact": "Contact",
+    "transport": "Transport"
+  },
+  "hero": {
+    "title": "Discover {brand}",
+    "subtitle": "Boutique excursions crafted for unforgettable days in Bavaro.",
+    "cta": "View Excursions"
+  },
+  "features": {
+    "title": "Why Travelers Choose Us",
+    "safety": {
+      "title": "Safety First",
+      "description": "Experienced guides, certified operators, and secure logistics on every route."
+    },
+    "experiences": {
+      "title": "Curated Experiences",
+      "description": "Handpicked activities with the right balance of comfort, culture, and adventure."
+    },
+    "transportation": {
+      "title": "Smooth Transportation",
+      "description": "Reliable pick-up and return services across Bavaro and Punta Cana."
+    }
+  },
+  "tours": {
+    "title": "Our Excursions",
+    "subtitle": "Explore premium Bavaro adventures with {brand}.",
+    "bookNow": "Book via WhatsApp",
+    "dateLabel": "Select your preferred date",
+    "dynamicSubtitle": "Explore premium Bavaro adventures with {brand}."
+  },
+  "payment": {
+    "paypal": "Pay with PayPal",
+    "paypalContact": "Pay deposit with PayPal",
+    "verifone": "Pay with Verifone",
+    "verifoneContact": "Pay deposit with Verifone",
+    "total": "Payment total"
+  },
+  "parallax": {
+    "title": "Sea, Jungle & Island Energy",
+    "subtitle": "From ocean breeze to inland landscapes, each tour is built to be memorable."
+  },
+  "testimonials": {
+    "title": "Guest Reviews"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "description": "Tell us your date, group size, and preferred excursion. We'll reply quickly.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "send": "Send Message",
+    "sent": "Message Sent!",
+    "getInTouch": "Get in touch",
+    "addressLabel": "Address",
+    "phoneLabel": "Phone",
+    "phoneNumber": "Phone: {phone}"
+  },
+  "footer": {
+    "company": "{brand}",
+    "description": "Your gateway to unforgettable tropical experiences in the Dominican Republic.",
+    "quickLinks": "Quick Links",
+    "home": "Home",
+    "tours": "Tours",
+    "contact": "Contact",
+    "admin": "Admin",
+    "copyright": "© {year} All rights reserved.",
+    "transport": "Transport"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "passwordPrompt": "Enter Admin Password:",
+    "login": "Login",
+    "logout": "Logout",
+    "addTour": "Add New Tour",
+    "editTour": "Edit Tour",
+    "deleteTour": "Delete Tour",
+    "save": "Save",
+    "cancel": "Cancel",
+    "tourTitle": "Title",
+    "description": "Description",
+    "price": "Price",
+    "image": "Image URL",
+    "uploadImage": "Upload Image",
+    "confirmDelete": "Are you sure you want to delete this tour?"
+  },
+  "whatsapp": {
+    "english": "Hello, I'm interested in the {tour} tour{date}. Please send me more information and the price.",
+    "spanish": "Hola, estoy interesado/a en el tour {tour}{date}. ¿Podría enviarme más información y el precio?",
+    "dateSegment": " for ",
+    "selectedDateEnglish": "Preferred date: {date}",
+    "selectedDateSpanish": "Fecha preferida: {date}",
+    "quantities": "Guests: {summary}",
+    "quantitiesSpanish": "Participantes: {summary}"
+  },
+  "transport": {
+    "title": "Airport Shuttle & Taxi",
+    "subtitle": "Private airport transfers and local rides for smooth arrivals and departures."
+  },
+  "details": {
+    "view": "View details",
+    "back": "← Back to listings",
+    "description": "Description",
+    "includes": "Includes",
+    "notIncluded": "Not included",
+    "notFound": "Service details could not be found.",
+    "pricing": "Pricing"
+  }
+}

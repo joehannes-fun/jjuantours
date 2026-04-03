@@ -1,0 +1,113 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "tours": "Tours",
+    "contact": "Contacto",
+    "transport": "Transporte"
+  },
+  "hero": {
+    "title": "Descubre {brand}",
+    "subtitle": "Excursiones boutique diseñadas para días inolvidables en Bávaro.",
+    "cta": "Ver Excursiones"
+  },
+  "features": {
+    "title": "Por qué nos eligen",
+    "safety": {
+      "title": "Seguridad Primero",
+      "description": "Guías experimentados, operadores certificados y logística segura en cada ruta."
+    },
+    "experiences": {
+      "title": "Experiencias Curadas",
+      "description": "Actividades seleccionadas con equilibrio entre comodidad, cultura y aventura."
+    },
+    "transportation": {
+      "title": "Transporte Sin Estrés",
+      "description": "Servicio confiable de recogida y regreso en Bávaro y Punta Cana."
+    }
+  },
+  "tours": {
+    "title": "Nuestras Excursiones",
+    "subtitle": "Explora aventuras premium en Bávaro con {brand}.",
+    "bookNow": "Reservar por WhatsApp",
+    "dateLabel": "Selecciona tu fecha preferida",
+    "dynamicSubtitle": "Explora aventuras premium en Bávaro con {brand}."
+  },
+  "payment": {
+    "paypal": "Pagar con PayPal",
+    "paypalContact": "Pagar depósito con PayPal",
+    "verifone": "Pagar con Verifone",
+    "verifoneContact": "Pagar depósito con Verifone",
+    "total": "Total a pagar"
+  },
+  "parallax": {
+    "title": "Mar, Jungla y Energía Caribeña",
+    "subtitle": "Desde la brisa del mar hasta paisajes del interior, cada tour es memorable."
+  },
+  "testimonials": {
+    "title": "Opiniones de nuestros viajeros"
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "description": "Indícanos tu fecha, tamaño del grupo y excursión preferida. Te respondemos rápido.",
+    "name": "Nombre",
+    "email": "Correo Electrónico",
+    "phone": "Teléfono",
+    "message": "Mensaje",
+    "send": "Enviar Mensaje",
+    "sent": "¡Mensaje Enviado!",
+    "getInTouch": "Hablemos",
+    "addressLabel": "Dirección",
+    "phoneLabel": "Teléfono",
+    "phoneNumber": "Teléfono: {phone}"
+  },
+  "footer": {
+    "company": "{brand}",
+    "description": "Tu puerta de entrada a experiencias tropicales inolvidables en República Dominicana.",
+    "quickLinks": "Enlaces Rápidos",
+    "home": "Inicio",
+    "tours": "Tours",
+    "contact": "Contacto",
+    "admin": "Admin",
+    "copyright": "© {year} Todos los derechos reservados.",
+    "transport": "Transporte"
+  },
+  "admin": {
+    "title": "Panel de Administración",
+    "passwordPrompt": "Ingresa la contraseña de administrador:",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "addTour": "Agregar Nuevo Tour",
+    "editTour": "Editar Tour",
+    "deleteTour": "Eliminar Tour",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "tourTitle": "Título",
+    "description": "Descripción",
+    "price": "Precio",
+    "image": "URL de Imagen",
+    "uploadImage": "Subir Imagen",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar este tour?"
+  },
+  "whatsapp": {
+    "english": "Hello, I'm interested in the {tour} tour{date}. Please send me more information and the price.",
+    "spanish": "Hola, estoy interesado/a en el tour {tour}{date}. ¿Podría enviarme más información y el precio?",
+    "dateSegment": " para el ",
+    "selectedDateEnglish": "Preferred date: {date}",
+    "selectedDateSpanish": "Fecha preferida: {date}",
+    "quantities": "Participantes: {summary}",
+    "quantitiesSpanish": "Guests: {summary}"
+  },
+  "transport": {
+    "title": "Traslados Aeropuerto & Taxi",
+    "subtitle": "Traslados privados al aeropuerto y viajes locales para llegadas y salidas sin estrés."
+  },
+  "details": {
+    "view": "Ver detalles",
+    "back": "← Volver al listado",
+    "description": "Descripción",
+    "includes": "Incluye",
+    "notIncluded": "No incluido",
+    "notFound": "No se pudieron encontrar los detalles del servicio.",
+    "pricing": "Precios"
+  }
+}
