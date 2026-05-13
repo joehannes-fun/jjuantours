@@ -36,19 +36,30 @@ export interface StoryElementsData {
 }
 
 const JSONBIN_MASTER_KEY = import.meta.env.VITE_JSONBIN_MASTER_KEY;
-const JSONBIN_STORY_ELEMENTS_EN = import.meta.env.VITE_JSONBIN_STORY_ELEMENTS_EN;
-const JSONBIN_STORY_ELEMENTS_ES = import.meta.env.VITE_JSONBIN_STORY_ELEMENTS_ES;
+const JSONBIN_STORY_ELEMENTS_EN =
+  import.meta.env.VITE_JSONBIN_STORY_ELEMENTS_EN ||
+  import.meta.env.JSONBIN_VITE_STORY_ELEMENTS_EN;
+const JSONBIN_STORY_ELEMENTS_ES =
+  import.meta.env.VITE_JSONBIN_STORY_ELEMENTS_ES ||
+  import.meta.env.JSONBIN_VITE_STORY_ELEMENTS_ES;
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const resolveStoryElementsBin = (locale: JourneyLocale) =>
   locale === 'es' ? JSONBIN_STORY_ELEMENTS_ES : JSONBIN_STORY_ELEMENTS_EN;
 
-const resolveJsonBinUrl = (binOrUrl: string) => {
-  if (/^https?:\/\//i.test(binOrUrl)) {
-    return binOrUrl;
+const resolveStoryElementsEndpoint = (binOrUrl: string, withLatest = true) => {
+  let url = binOrUrl.trim().replace(/\/+$/, '');
+
+  if (/^https?:\/\//i.test(url)) {
+    if (withLatest) {
+      return url.match(/\/latest$/i) ? url : `${url}/latest`;
+    }
+    return url.replace(/\/latest$/i, '');
   }
-  return `https://api.jsonbin.io/v3/b/${binOrUrl}`;
+
+  const baseUrl = `https://api.jsonbin.io/v3/b/${url}`;
+  return withLatest ? `${baseUrl}/latest` : baseUrl;
 };
 
 const unwrapJsonBinRecord = (payload: unknown): unknown => {
@@ -83,12 +94,13 @@ export const getStoryElements = async (locale: JourneyLocale): Promise<StoryElem
   const binOrUrl = resolveStoryElementsBin(locale);
 
   if (!binOrUrl) {
+    console.warn(`Story elements config missing for locale ${locale}`);
     return null;
   }
 
   try {
     const headers: HeadersInit = JSONBIN_MASTER_KEY ? { 'X-Master-Key': JSONBIN_MASTER_KEY } : {};
-    const response = await fetch(`${resolveJsonBinUrl(binOrUrl)}/latest`, {
+    const response = await fetch(resolveStoryElementsEndpoint(binOrUrl, true), {
       headers,
       cache: 'no-cache',
     });
@@ -124,7 +136,7 @@ export const saveStoryElements = async (
       'X-Master-Key': JSONBIN_MASTER_KEY || '',
     };
 
-    const response = await fetch(resolveJsonBinUrl(binOrUrl), {
+    const response = await fetch(resolveStoryElementsEndpoint(binOrUrl, false), {
       method: 'PUT',
       headers,
       body: JSON.stringify(data),
