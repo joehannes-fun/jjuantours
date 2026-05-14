@@ -132,8 +132,8 @@ export const saveStoryElements = async (
 
   try {
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      'X-Master-Key': JSONBIN_MASTER_KEY || '',
+      //'Content-Type': 'application/json',
+      //'X-Master-Key': JSONBIN_MASTER_KEY || '',
     };
 
     const response = await fetch(resolveStoryElementsEndpoint(binOrUrl, false), {

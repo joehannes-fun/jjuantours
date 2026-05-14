@@ -122,9 +122,9 @@ const fetchDirectBlogArticles = async (binId: string | undefined): Promise<unkno
   try {
     console.log('[Blog] Attempting direct JSONBin fetch from bin:', binId);
     const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-      headers: {
-        'X-Master-Key': JSONBIN_MASTER_KEY,
-      },
+      //headers: {
+      // 'X-Master-Key': JSONBIN_MASTER_KEY,
+      //},
       cache: 'no-cache',
     });
     if (!response.ok) {
