@@ -84,17 +84,27 @@ const Blog = () => {
             <p className="mt-3 text-xs text-slate-500">If blog should have content, verify VITE_JSONBIN_BLOG_EN and VITE_JSONBIN_BLOG_ES environment variables are set.</p>
           </div>
         ) : (
-          <div className="grid gap-8">
+          <div className="grid gap-10">
             {articles.map((article) => (
-              <article key={article.id} id={article.slug} className="rounded-[2rem] border border-white/80 bg-white/95 p-8 shadow-xl shadow-slate-200/50">
-                <header className="mb-6">
+              <article
+                key={article.id}
+                id={article.slug}
+                className="rounded-[2rem] border border-slate-200 bg-white p-10 shadow-xl shadow-slate-200/40 transition-transform duration-300 hover:-translate-y-1"
+              >
+                <header className="mb-8">
                   <h2 className="text-3xl font-semibold text-slate-900">{article.title}</h2>
-                  {article.tour && (
-                    <p className="mt-2 text-sm uppercase tracking-[0.24em] text-cyan-700">
-                      <FormattedMessage id="blog.relatedTourLabel" defaultMessage="Related tour" />: {article.tour}
-                    </p>
-                  )}
-                  {article.date && <time dateTime={article.date} className="mt-3 block text-sm text-slate-500">{article.date}</time>}
+                  <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-500">
+                    {article.tour && (
+                      <span className="inline-flex items-center rounded-full bg-cyan-50 px-3 py-1 font-medium text-cyan-700">
+                        <FormattedMessage id="blog.relatedTourLabel" defaultMessage="Related tour" />: {article.tour}
+                      </span>
+                    )}
+                    {article.date && (
+                      <time dateTime={article.date} className="text-slate-500">
+                        {article.date}
+                      </time>
+                    )}
+                  </div>
                 </header>
                 <div className="prose prose-slate max-w-none">{renderPostContent(article.post)}</div>
               </article>

@@ -10,6 +10,7 @@ import FABWhatsApp from '../components/FABWhatsApp';
 import { useBrand } from '../contexts/BrandContext';
 import { useI18n } from '../contexts/I18nContext';
 import { generateWhatsAppMessage } from '../utils/whatsapp';
+import { generateBlogListStructuredData } from '../utils/seoHelpers';
 import { getFallbackIntroStory, getIntroStoryPreferred, StoryData } from '../services/introStoryService';
 import { useBlog } from '../contexts/BlogContext';
 
@@ -22,6 +23,15 @@ const Home: React.FC = () => {
   const { blogArticles } = useBlog();
   const navigate = useNavigate();
   const [storyData, setStoryData] = useState<StoryData | null>(null);
+  const seoArticles = blogArticles[locale] ?? [];
+  const hiddenBlogStyle = {
+    position: 'absolute' as const,
+    left: '-9999px',
+    top: 'auto',
+    width: '1px',
+    height: '1px',
+    overflow: 'hidden',
+  };
 
   useEffect(() => {
     let isCurrent = true;
@@ -37,6 +47,28 @@ const Home: React.FC = () => {
     };
   }, [locale]);
 
+  useEffect(() => {
+    if (seoArticles.length === 0) {
+      return;
+    }
+
+    generateBlogListStructuredData(
+      locale === 'es' ? 'Blog de Tours' : 'Blog',
+      locale === 'es'
+        ? 'Entradas del blog de viajes en Punta Cana para SEO y motores de búsqueda.'
+        : 'Punta Cana travel blog entries for SEO and search engines.',
+      seoArticles
+    );
+
+    return () => {
+      document.querySelectorAll('script[type="application/ld+json"]').forEach((script) => {
+        if (script.textContent?.includes('Blog')) {
+          script.remove();
+        }
+      });
+    };
+  }, [locale, seoArticles]);
+
   return (
     <div id="top" className="relative">
       {/* FAB WhatsApp Button */}
@@ -44,6 +76,18 @@ const Home: React.FC = () => {
 
       {/* Hero Section */}
       <Hero backgroundImage={HERO_BACKGROUND_IMAGE} backgroundVideo={HERO_BACKGROUND_VIDEO} />
+
+      {seoArticles.length > 0 && (
+        <section aria-hidden="true" style={hiddenBlogStyle}>
+          <h2>{locale === 'es' ? 'Blog' : 'Blog'}</h2>
+          {seoArticles.map((article) => (
+            <article key={article.id}>
+              <h3>{article.title}</h3>
+              <p>{article.post.slice(0, 180)}</p>
+            </article>
+          ))}
+        </section>
+      )}
 
       {/* Story Narrative Sections */}
       <div className="space-y-0 min-h-[50vh]">

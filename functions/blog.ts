@@ -38,7 +38,7 @@ export async function onRequest(context: { request: Request; env: Record<string,
     return new Response(body, {
       status: 200,
       headers: {
-        //'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
         'Cache-Control': 'max-age=300',
       },
     });

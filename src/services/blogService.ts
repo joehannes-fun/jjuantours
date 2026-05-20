@@ -73,20 +73,36 @@ const normalizeBlogArticle = (rawArticle: RawBlogArticle, locale: Locale): BlogA
 const resolveBlogBinId = (locale: Locale): string | undefined =>
   locale === 'es' ? JSONBIN_BLOG_ES_BIN_ID : JSONBIN_BLOG_EN_BIN_ID;
 
+const findFirstArray = (data: unknown): unknown[] | undefined => {
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  if (typeof data !== 'object' || data === null) {
+    return undefined;
+  }
+
+  for (const value of Object.values(data as Record<string, unknown>)) {
+    const found = findFirstArray(value);
+    if (found) {
+      return found;
+    }
+  }
+
+  return undefined;
+};
+
 const extractRecord = (data: unknown): unknown[] => {
   if (Array.isArray(data)) {
     return data;
   }
+
   if (typeof data === 'object' && data !== null) {
-    const record = (data as Record<string, unknown>).record;
-    if (Array.isArray(record)) {
-      return record;
-    }
-    const nested = (data as Record<string, unknown>).record?.record;
-    if (Array.isArray(nested)) {
-      return nested;
-    }
+    const recordData = (data as Record<string, unknown>).record ?? data;
+    const arrayData = findFirstArray(recordData);
+    return arrayData ?? [];
   }
+
   return [];
 };
 
@@ -95,11 +111,18 @@ const fetchFromProxy = async (locale: Locale): Promise<unknown[]> => {
   try {
     const response = await fetch(`${BLOG_API_ENDPOINT}?locale=${locale}`, {
       cache: 'no-cache',
+      headers: {
+        Accept: 'application/json',
+      },
     });
     if (!response.ok) {
       throw new Error(`Blog proxy request failed with status ${response.status}`);
     }
-    const data = await response.json();
+    const responseText = await response.text();
+    if (responseText.trim().startsWith('<')) {
+      throw new Error('Proxy returned HTML instead of JSON; check /api/blog route or deployment configuration.');
+    }
+    const data = JSON.parse(responseText);
     console.log('[Blog] Proxy fetch successful, records:', data);
     return extractRecord(data);
   } catch (error) {
@@ -141,13 +164,24 @@ const fetchDirectBlogArticles = async (binId: string | undefined): Promise<unkno
 
 const fetchRawBlogArticles = async (locale: Locale): Promise<unknown[]> => {
   console.log('[Blog] Starting blog fetch for locale:', locale);
+
   try {
-    return await fetchFromProxy(locale);
+    const proxyArticles = await fetchFromProxy(locale);
+    if (proxyArticles.length > 0) {
+      return proxyArticles;
+    }
+    console.warn('[Blog] Proxy returned no article records, falling back to direct JSONBin fetch');
   } catch (error) {
     console.warn('[Blog] Proxy unavailable, falling back to direct JSONBin fetch');
-    const binId = resolveBlogBinId(locale);
-    return await fetchDirectBlogArticles(binId);
   }
+
+  const binId = resolveBlogBinId(locale);
+  const directArticles = await fetchDirectBlogArticles(binId);
+  if (directArticles.length > 0) {
+    return directArticles;
+  }
+
+  throw new Error('Failed to load blog articles from proxy and direct JSONBin fetch.');
 };
 
 export const getBlogArticles = async (locale: Locale): Promise<BlogArticle[]> => {
