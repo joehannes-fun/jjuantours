@@ -5,6 +5,7 @@ export interface RawBlogArticle {
   title?: string | { en?: string; es?: string };
   tour?: string | { en?: string; es?: string };
   post?: string | { en?: string; es?: string };
+  description?: string | { en?: string; es?: string };
   date?: string;
   language?: Locale;
   slug?: string;
@@ -50,7 +51,7 @@ const getLocalizedValue = (value: unknown, locale: Locale): string => {
 const normalizeBlogArticle = (rawArticle: RawBlogArticle, locale: Locale): BlogArticle | null => {
   const title = getLocalizedValue(rawArticle.title, locale);
   const tour = getLocalizedValue(rawArticle.tour, locale);
-  const post = getLocalizedValue(rawArticle.post, locale);
+  const post = getLocalizedValue(rawArticle.post || rawArticle.description, locale);
   const date = rawArticle.date?.trim();
   const id = String(rawArticle.id ?? `${title}-${tour}-${date || 'unknown'}`).trim();
   const slug = rawArticle.slug?.trim() || `${title.toLowerCase().replace(/[^a-z0-9]+/gi, '-')}`.replace(/(^-|-$)/g, '');
