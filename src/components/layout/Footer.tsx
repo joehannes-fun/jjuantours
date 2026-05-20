@@ -34,8 +34,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
           <div>
             <div className="mb-6 flex items-center gap-3">
-              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-white/10 to-cyan-50/10 flex items-center justify-center ring-1 ring-white/20 backdrop-blur-md shadow-lg">
-                <img src="/competitor-logo.svg" alt="Logo" className="h-10 w-10" />
+              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-white/10 to-cyan-50/10 flex items-center justify-center ring-1 ring-white/20 backdrop-blur-md shadow-lg overflow-hidden">
+                {brandSettings.brandicon ? (
+                  <img src={brandSettings.brandicon} alt="Logo" className="h-full w-full object-cover" />
+                ) : (
+                  <img src="/competitor-logo.svg" alt="Logo" className="h-10 w-10" />
+                )}
               </div>
               <h3 className="text-2xl font-bold text-white">{brandSettings.brandName}</h3>
             </div>

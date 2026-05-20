@@ -9,8 +9,8 @@ const renderPostContent = (post: string) =>
   post
     .split(/\n{2,}/)
     .filter(Boolean)
-    .map((paragraph) => (
-      <p key={paragraph} className="mb-4 leading-8 text-slate-700">
+    .map((paragraph, index) => (
+      <p key={`${index}-${paragraph.substring(0, 20)}`} className="mb-4 text-lg leading-relaxed text-slate-700 font-['Poppins',sans-serif]">
         {paragraph}
       </p>
     ));
@@ -50,11 +50,11 @@ const Blog = () => {
   return (
     <div className="bg-gradient-to-b from-white via-cyan-50 to-orange-50 py-20">
       <div className="section-shell">
-        <div className="mb-10 text-center">
-          <h1 className="mb-4 text-5xl font-bold text-slate-900 md:text-6xl">
+        <div className="mb-16 text-center">
+          <h1 className="mb-6 text-5xl font-bold text-slate-900 md:text-6xl font-['Playfair_Display',serif] tracking-tight">
             <FormattedMessage id="blog.title" defaultMessage="Blog" />
           </h1>
-          <p className="mx-auto max-w-2xl text-lg text-slate-600">
+          <p className="mx-auto max-w-2xl text-xl text-slate-600 font-['Poppins',sans-serif] leading-relaxed">
             <FormattedMessage id="blog.description" values={{ brand: brandSettings.brandName }} />
           </p>
         </div>
@@ -91,16 +91,18 @@ const Blog = () => {
                 id={article.slug}
                 className="rounded-[2rem] border border-slate-200 bg-white p-10 shadow-xl shadow-slate-200/40 transition-transform duration-300 hover:-translate-y-1"
               >
-                <header className="mb-8">
-                  <h2 className="text-3xl font-semibold text-slate-900">{article.title}</h2>
-                  <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-500">
+                <header className="mb-8 border-b border-slate-100 pb-6">
+                  <h2 className="text-3xl md:text-4xl font-bold text-slate-900 font-['Playfair_Display',serif] tracking-tight leading-tight">
+                    {article.title}
+                  </h2>
+                  <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-slate-500">
                     {article.tour && (
-                      <span className="inline-flex items-center rounded-full bg-cyan-50 px-3 py-1 font-medium text-cyan-700">
+                      <span className="inline-flex items-center rounded-full bg-gradient-to-r from-cyan-50 to-teal-50 px-4 py-1.5 font-medium text-cyan-700 shadow-sm">
                         <FormattedMessage id="blog.relatedTourLabel" defaultMessage="Related tour" />: {article.tour}
                       </span>
                     )}
                     {article.date && (
-                      <time dateTime={article.date} className="text-slate-500">
+                      <time dateTime={article.date} className="text-slate-500 font-['Poppins',sans-serif]">
                         {article.date}
                       </time>
                     )}
