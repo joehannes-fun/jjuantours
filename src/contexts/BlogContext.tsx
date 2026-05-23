@@ -49,7 +49,7 @@ export const BlogProvider: React.FC<BlogProviderProps> = ({ children }) => {
     };
 
     loadBlogContent();
-  }, []);
+  }, [locale]);
 
   return (
     <BlogContext.Provider value={{ blogArticles, loading, error }}>

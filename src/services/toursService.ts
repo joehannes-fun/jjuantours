@@ -1,5 +1,6 @@
 import { tours as staticTours } from '../data/tours';
 import { transportServices as staticTransportServices } from '../data/transportServices';
+import type { TransferRoute } from '../types/transport';
 
 const JSONBIN_MASTER_KEY = import.meta.env.VITE_JSONBIN_MASTER_KEY;
 const JSONBIN_TOURS_EN_BIN_ID = import.meta.env.VITE_JSONBIN_TOURS_EN;
@@ -29,6 +30,16 @@ interface RawImage {
   localPath?: string;
 }
 
+interface RawTransferRoute {
+  id?: string;
+  origin?: string;
+  destination?: string;
+  price?: string;
+  amount?: number;
+  distanceKm?: number;
+  durationMinutes?: number;
+}
+
 interface RawService {
   id?: number;
   title?: string;
@@ -37,6 +48,7 @@ interface RawService {
   pricing?: RawPricingTier[];
   images?: RawImage[];
   image?: string;
+  transferRoutes?: RawTransferRoute[];
 }
 
 export interface PricingOption {
@@ -58,6 +70,7 @@ export interface Tour {
   price: string;
   pricingOptions: PricingOption[];
   details: ServiceDetails;
+  transferRoutes?: TransferRoute[];
 }
 
 const extractAmountFromPrice = (price: string): number | null => {
@@ -130,6 +143,18 @@ const normalizeService = (
   const title = String(rawService.title ?? '').trim();
   const description = String(rawService.description ?? '').trim();
 
+  const transferRoutes = Array.isArray(rawService.transferRoutes)
+    ? rawService.transferRoutes.map((route) => ({
+        id: String(route.id ?? ''),
+        origin: String(route.origin ?? '').trim(),
+        destination: String(route.destination ?? '').trim(),
+        price: String(route.price ?? '').trim(),
+        amount: Number.isFinite(Number(route.amount)) ? Number(route.amount) : extractAmountFromPrice(String(route.price ?? '')),
+        distanceKm: route.distanceKm ?? null,
+        durationMinutes: route.durationMinutes ?? null,
+      }))
+    : undefined;
+
   return {
     id: Number(rawService.id ?? index + 1),
     image,
@@ -141,6 +166,7 @@ const normalizeService = (
       description,
       images: detailImages.length > 0 ? detailImages : [image],
     },
+    transferRoutes,
   };
 };
 
@@ -179,7 +205,7 @@ const fetchServices = async (
 
   try {
     const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-      //headers: { 'X-Master-Key': JSONBIN_MASTER_KEY },
+      headers: { 'X-Master-Key': JSONBIN_MASTER_KEY },
       cache: 'no-cache',
     });
 
@@ -225,6 +251,15 @@ const serializeTransportForSave = (services: Tour[]): RawService[] =>
     images: service.details.images.map((image, index) => ({
       role: `detail_${index + 1}`,
       localPath: toLocalPath(image),
+    })),
+    transferRoutes: service.transferRoutes?.map((route) => ({
+      id: route.id,
+      origin: route.origin,
+      destination: route.destination,
+      price: route.price,
+      amount: route.amount ?? null,
+      distanceKm: route.distanceKm ?? null,
+      durationMinutes: route.durationMinutes ?? null,
     })),
   }));
 

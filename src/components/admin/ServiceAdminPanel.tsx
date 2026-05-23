@@ -17,6 +17,16 @@ interface ServiceAdminPanelProps {
 
 const createEmptyPricingOption = (): PricingOption => ({ tier: '', price: '', amount: null });
 
+const createEmptyRoute = () => ({
+  id: String(Date.now()),
+  origin: '',
+  destination: '',
+  price: '',
+  amount: null,
+  distanceKm: null,
+  durationMinutes: null,
+});
+
 const createEmptyService = (): Tour => ({
   id: Date.now(),
   title: '',
@@ -24,6 +34,7 @@ const createEmptyService = (): Tour => ({
   image: '',
   price: '',
   pricingOptions: [createEmptyPricingOption()],
+  transferRoutes: [createEmptyRoute()],
   details: { description: '', images: [''] },
 });
 
@@ -74,6 +85,7 @@ const ServiceAdminPanel: React.FC<ServiceAdminPanelProps> = ({
     setDraft({
       ...service,
       pricingOptions: service.pricingOptions.length ? service.pricingOptions : [createEmptyPricingOption()],
+      transferRoutes: (service as any).transferRoutes?.length ? (service as any).transferRoutes : [createEmptyRoute()],
       details: {
         description: service.details.description || service.description,
         images: service.details.images.length ? service.details.images : [service.image],
@@ -90,6 +102,15 @@ const ServiceAdminPanel: React.FC<ServiceAdminPanelProps> = ({
     }));
   };
 
+  const updateRoute = (index: number, field: string, value: string) => {
+    setDraft((current: any) => ({
+      ...current,
+      transferRoutes: (current.transferRoutes ?? []).map((route: any, routeIndex: number) =>
+        routeIndex === index ? { ...route, [field]: value } : route
+      ),
+    }));
+  };
+
   const updateImage = (index: number, value: string) => {
     setDraft((current) => ({
       ...current,
@@ -101,11 +122,23 @@ const ServiceAdminPanel: React.FC<ServiceAdminPanelProps> = ({
       },
     }));
   };
-
   const buildDraft = (): Tour => {
     const pricingOptions = draft.pricingOptions
       .map(buildPricingOption)
       .filter((option) => option.tier && option.price);
+    const routes = (draft.transferRoutes ?? [])
+      .map((route: any, index: number) => ({
+        id: route.id || `${index}-${route.origin}-${route.destination}`,
+        origin: String(route.origin ?? '').trim(),
+        destination: String(route.destination ?? '').trim(),
+        price: String(route.price ?? '').trim(),
+        amount: Number.isFinite(Number(String(route.price ?? '').replace(/[^0-9.]/g, '')))
+          ? Number(String(route.price ?? '').replace(/[^0-9.]/g, ''))
+          : null,
+        distanceKm: Number.isFinite(Number(route.distanceKm)) ? Number(route.distanceKm) : null,
+        durationMinutes: Number.isFinite(Number(route.durationMinutes)) ? Number(route.durationMinutes) : null,
+      }))
+      .filter((route: any) => route.origin && route.destination && route.price);
     const images = draft.details.images.map(normalizeImageEntry).filter(Boolean);
 
     return {
@@ -113,6 +146,7 @@ const ServiceAdminPanel: React.FC<ServiceAdminPanelProps> = ({
       price: pricingOptions[0]?.price || draft.price,
       image: images[0] || draft.image,
       pricingOptions,
+      transferRoutes: routes?.length ? routes : undefined,
       details: {
         description: draft.details.description.trim(),
         images,
@@ -226,6 +260,83 @@ const ServiceAdminPanel: React.FC<ServiceAdminPanelProps> = ({
             ))}
           </div>
         </div>
+
+        {category === 'transport' && (
+          <div className="mt-6 rounded-3xl border border-slate-200 p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-slate-900">Transfer routes</h3>
+              <button
+                onClick={() => setDraft((current) => ({
+                  ...current,
+                  transferRoutes: [...(current.transferRoutes ?? []), createEmptyRoute()],
+                }))}
+                className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+              >
+                Add route
+              </button>
+            </div>
+            <div className="space-y-4">
+              {(draft.transferRoutes ?? []).map((route, index) => (
+                <div key={route.id || index} className="space-y-4 rounded-3xl border border-slate-200 p-4">
+                  <div className="grid gap-3 md:grid-cols-[1fr,1fr,1fr,auto]">
+                    <input
+                      type="text"
+                      value={(route as any).origin}
+                      onChange={(event) => updateRoute(index, 'origin', event.target.value)}
+                      placeholder="Origin"
+                      className="rounded-2xl border border-slate-200 px-4 py-3"
+                    />
+                    <input
+                      type="text"
+                      value={(route as any).destination}
+                      onChange={(event) => updateRoute(index, 'destination', event.target.value)}
+                      placeholder="Destination"
+                      className="rounded-2xl border border-slate-200 px-4 py-3"
+                    />
+                    <input
+                      type="text"
+                      value={(route as any).price}
+                      onChange={(event) => updateRoute(index, 'price', event.target.value)}
+                      placeholder="Price"
+                      className="rounded-2xl border border-slate-200 px-4 py-3"
+                    />
+                    <button
+                      onClick={() => setDraft((current) => ({
+                        ...current,
+                        transferRoutes: (current.transferRoutes ?? []).length && (current.transferRoutes ?? []).length > 1
+                          ? (current.transferRoutes ?? []).filter((_: any, routeIndex: number) => routeIndex !== index)
+                          : [createEmptyRoute()],
+                      }))}
+                      className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <div className="grid gap-3 md:grid-cols-[1fr,1fr]">
+                    <input
+                      type="number"
+                      value={(route as any).distanceKm ?? ''}
+                      onChange={(event) => updateRoute(index, 'distanceKm', event.target.value)}
+                      placeholder="Distance km"
+                      className="rounded-2xl border border-slate-200 px-4 py-3"
+                      min={0}
+                      step={0.1}
+                    />
+                    <input
+                      type="number"
+                      value={(route as any).durationMinutes ?? ''}
+                      onChange={(event) => updateRoute(index, 'durationMinutes', event.target.value)}
+                      placeholder="Duration min"
+                      className="rounded-2xl border border-slate-200 px-4 py-3"
+                      min={0}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 rounded-3xl border border-slate-200 p-5">
           <div className="mb-4 flex items-center justify-between">
