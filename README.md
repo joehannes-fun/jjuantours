@@ -545,11 +545,21 @@ VITE_JSONBIN_TRANSPORT_EN = "your-english-transport-bin-id"
 VITE_JSONBIN_TRANSPORT_ES = "your-spanish-transport-bin-id"
 VITE_JSONBIN_SOCIAL_BIN_ID = "your-social-media-bin-id"
 VITE_JSONBIN_TESTIMONIALS_BIN_ID = "your-testimonials-bin-id"
-VITE_GOOGLE_CLIENT_ID = "your-google-client-id"
+VITE_JSONBIN_BLOG_EN = "your-english-blog-bin-id"
+VITE_JSONBIN_BLOG_ES = "your-spanish-blog-bin-id"
+VITE_JSONBIN_STORY_ELEMENTS_EN = "your-story-elements-en-bin-id"
+VITE_JSONBIN_STORY_ELEMENTS_ES = "your-story-elements-es-bin-id"
 VITE_JSONBIN_JOURNEY_EN = "your-english-journey-bin-id"
 VITE_JSONBIN_JOURNEY_ES = "your-spanish-journey-bin-id"
+VITE_JSONBIN_EN_BIN_ID = "your-english-translation-bin-id"
+VITE_JSONBIN_ES_BIN_ID = "your-spanish-translation-bin-id"
+VITE_JSONBIN_EXAMPLETESTOURS_EN_BIN_ID = "your-example-tours-en-bin-id"
+VITE_JSONBIN_EXAMPLETESTOURS_ES_BIN_ID = "your-example-tours-es-bin-id"
+VITE_JSONBIN_TRANSFER_BIN_ID = "your-transfer-config-bin-id"
+VITE_GOOGLE_CLIENT_ID = "your-google-client-id"
 VITE_CLOUDINARY_CLOUD_NAME = "your-cloudinary-cloud-name"
 VITE_CLOUDINARY_UPLOAD_PRESET = "your-cloudinary-upload-preset"
+INIT_DATA_SECRET = "your-initialization-secret"
 ```
 
 ### Setting up Environment Variables in Cloudflare
@@ -558,7 +568,69 @@ VITE_CLOUDINARY_UPLOAD_PRESET = "your-cloudinary-upload-preset"
 2. Select your project
 3. Go to Settings → Environment variables
 4. Add each variable with its corresponding value
-5. Redeploy your site for changes to take effect
+5. Create a Cloudflare KV namespace and bind it to the Pages function as `DATA_KV`
+6. Add `INIT_DATA_SECRET` to protect the one-time initializer
+7. Redeploy your site for changes to take effect
+
+After deployment, trigger the initializer by calling the `/api/init-data` endpoint with the `x-init-secret` header set to the shared secret, or use the helper script:
+
+```bash
+INIT_DATA_URL=https://tours-4n8.pages.dev/api/init-data INIT_DATA_SECRET="your-initialization-secret" npm run init-cloudflare-data
+```
+
+### Automatic initialization on deploy
+
+If you also add `INIT_DATA_URL` and `INIT_DATA_SECRET` to your Cloudflare Pages environment, the build command will attempt to trigger the init endpoint automatically after `vite build` completes.
+
+Set these variables in Cloudflare Pages:
+
+```
+INIT_DATA_URL=https://tours-4n8.pages.dev/api/init-data
+INIT_DATA_SECRET=your-initialization-secret
+```
+
+Then deploy normally. The build step will retry calling the init endpoint up to 10 times.
+
+> Note: This is best-effort automation. If the deployed endpoint is not reachable yet during build, the trigger script will log a warning and continue without failing the build.
+
+If the automatic path does not complete, perform these manual steps:
+
+1. Deploy the site.
+2. Confirm the site is live at `https://tours-4n8.pages.dev`.
+3. Run:
+
+```bash
+INIT_DATA_URL=https://tours-4n8.pages.dev/api/init-data INIT_DATA_SECRET="your-initialization-secret" npm run init-cloudflare-data
+```
+
+4. Confirm the initializer response reports `success: true` and the resources initialized.
+
+### Automatic trigger on deploy
+
+If you set `INIT_DATA_URL` and `INIT_DATA_SECRET` in your build environment, the build command will attempt to initialize data automatically after `vite build` finishes.
+
+Add these environment variables to Cloudflare Pages:
+
+```
+INIT_DATA_URL=https://tours-4n8.pages.dev/api/init-data
+INIT_DATA_SECRET=your-initialization-secret
+```
+
+Then deploy normally. The build step will try to POST to the init endpoint up to 10 times.
+
+> Note: Cloudflare Pages build may run before the new deployment URL is fully live. This helper is best-effort: if the endpoint is not reachable yet, it will retry and then log a warning instead of failing the build.
+
+If the automatic trigger does not complete, run this manual step exactly:
+
+1. Deploy your site.
+2. Confirm the app is live at `https://tours-4n8.pages.dev`.
+3. Run:
+
+```bash
+INIT_DATA_URL=https://tours-4n8.pages.dev/api/init-data INIT_DATA_SECRET="your-initialization-secret" npm run init-cloudflare-data
+```
+
+4. Verify the response shows `success: true` and the populated resource list.
 
 ## Technologies Used
 

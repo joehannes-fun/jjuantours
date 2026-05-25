@@ -4,9 +4,12 @@ const RESOURCE_WITH_LOCALE = new Set([
   'tour',
   'tours',
   'transport',
+  'transport-services',
   'example-tours',
   'story-elements',
   'intro-story',
+  'translations',
+  'transfer-config',
 ]);
 
 const readLocalJson = async (key: string): Promise<unknown | null> => {
@@ -40,6 +43,80 @@ const createErrorResponse = (message: string, status = 400) =>
     headers: { 'Content-Type': 'application/json' },
   });
 
+const JSONBIN_RESOURCE_MAP: Record<string, string | { en: string; es: string }> = {
+  'brand': 'VITE_JSONBIN_BRAND_BIN_ID',
+  'transfer-config': 'VITE_JSONBIN_TRANSFER_BIN_ID',
+  'social-media': 'VITE_JSONBIN_SOCIAL_BIN_ID',
+  'testimonials': 'VITE_JSONBIN_TESTIMONIALS_BIN_ID',
+  'blog': { en: 'VITE_JSONBIN_BLOG_EN', es: 'VITE_JSONBIN_BLOG_ES' },
+  'tours': { en: 'VITE_JSONBIN_TOURS_EN', es: 'VITE_JSONBIN_TOURS_ES' },
+  'transport-services': { en: 'VITE_JSONBIN_TRANSPORT_EN', es: 'VITE_JSONBIN_TRANSPORT_ES' },
+  'example-tours': { en: 'VITE_JSONBIN_EXAMPLETESTOURS_EN_BIN_ID', es: 'VITE_JSONBIN_EXAMPLETESTOURS_ES_BIN_ID' },
+  'story-elements': { en: 'VITE_JSONBIN_STORY_ELEMENTS_EN', es: 'VITE_JSONBIN_STORY_ELEMENTS_ES' },
+  'intro-story': { en: 'VITE_JSONBIN_JOURNEY_EN', es: 'VITE_JSONBIN_JOURNEY_ES' },
+  'translations': { en: 'VITE_JSONBIN_EN_BIN_ID', es: 'VITE_JSONBIN_ES_BIN_ID' },
+};
+
+const parseResourceKey = (key: string) => {
+  const match = /^(.*)-(en|es)$/.exec(key);
+  if (match) {
+    return { resource: match[1], locale: match[2] };
+  }
+  return { resource: key };
+};
+
+const normalizeJsonBinUrl = (binDefinition: string | undefined): string | null => {
+  if (!binDefinition || !binDefinition.trim()) return null;
+  const trimmed = binDefinition.trim();
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed.replace(/\/latest\/?$/i, '/latest');
+  }
+  return `https://api.jsonbin.io/v3/b/${trimmed}/latest`;
+};
+
+const getJsonBinUrl = (resource: string, locale: string | undefined, env: Record<string, any>): string | null => {
+  const entry = JSONBIN_RESOURCE_MAP[resource];
+  if (!entry) {
+    return null;
+  }
+
+  if (typeof entry === 'string') {
+    return normalizeJsonBinUrl(env[entry]);
+  }
+
+  if (!locale) {
+    return null;
+  }
+
+  const envKey = entry[locale as 'en' | 'es'];
+  return normalizeJsonBinUrl(env[envKey]);
+};
+
+const jsonBinFetch = async (url: string, masterKey?: string): Promise<unknown | null> => {
+  try {
+    const headers: Record<string, string> = { Accept: 'application/json' };
+    if (masterKey) {
+      headers['X-Master-Key'] = masterKey;
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers,
+      cache: 'no-cache',
+    });
+
+    if (!response.ok) {
+      console.warn('[Cloudflare Function] JSONBin fetch failed for', url, response.status);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.warn('[Cloudflare Function] JSONBin fetch error for', url, error);
+    return null;
+  }
+};
+
 const loadStoredData = async (key: string, env: Record<string, any>) => {
   if (env.DATA_KV && typeof env.DATA_KV.get === 'function') {
     try {
@@ -52,7 +129,29 @@ const loadStoredData = async (key: string, env: Record<string, any>) => {
     }
   }
 
-  return readLocalJson(key);
+  const localData = await readLocalJson(key);
+  if (localData !== null) {
+    return localData;
+  }
+
+  const { resource, locale } = parseResourceKey(key);
+  const jsonBinUrl = getJsonBinUrl(resource, locale, env);
+  if (!jsonBinUrl) {
+    return null;
+  }
+
+  const payload = await jsonBinFetch(jsonBinUrl, env.VITE_JSONBIN_MASTER_KEY);
+  if (payload === null) {
+    return null;
+  }
+
+  try {
+    await saveStoredData(key, payload, env);
+  } catch (err) {
+    console.warn('[Cloudflare Function] Failed to persist JSONBin fallback for', key, err);
+  }
+
+  return payload;
 };
 
 const saveStoredData = async (key: string, payload: unknown, env: Record<string, any>) => {
