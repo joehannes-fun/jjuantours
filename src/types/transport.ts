@@ -41,6 +41,7 @@ export interface TransferConfig {
   vehicleTypes: VehicleType[];
   zones?: ZoneData[];
   modifiers: Modifiers;
+  municipioMultipliers?: Record<string, number>;
 }
 
 export interface TransferFormData {
@@ -50,6 +51,8 @@ export interface TransferFormData {
   nightTransfer: boolean;
   waitingHours: number;
   childSeats: number;
+  originMunicipio?: string;
+  destinationMunicipio?: string;
 }
 
 export interface TransferPriceResult {
@@ -62,6 +65,8 @@ export interface TransferPriceResult {
   currency: string;
   distanceKm: number;
   durationMinutes: number;
+  originMunicipio?: string;
+  destinationMunicipio?: string;
   breakdown: {
     distanceKm: number;
     pricePerKm: number;
@@ -79,6 +84,7 @@ export interface TransferPriceResult {
     distanceDiscountSaturationKm: number;
     markupApplied: number;
     minimumPriceApplied: boolean;
+    municipioMultiplierApplied?: number;
   };
 }
 

@@ -1,5 +1,6 @@
 import { TransferConfig } from '../types/transport';
 import { DEFAULT_TRANSFER_CONFIG } from '../data/transferDefaults';
+import { DEFAULT_MUNICIPIO_MULTIPLIERS } from '../data/municipioPriceMultipliers';
 
 const JSONBIN_MASTER_KEY = import.meta.env.VITE_JSONBIN_MASTER_KEY;
 const JSONBIN_TRANSFER_BIN_ID = import.meta.env.VITE_JSONBIN_TRANSFER_BIN_ID;
@@ -12,6 +13,7 @@ export async function getTransferConfig(): Promise<TransferConfig> {
     return {
       ...DEFAULT_TRANSFER_CONFIG,
       vehicleTypes: [...DEFAULT_TRANSFER_CONFIG.vehicleTypes],
+      municipioMultipliers: { ...DEFAULT_MUNICIPIO_MULTIPLIERS },
     };
   }
 
@@ -35,6 +37,7 @@ export async function getTransferConfig(): Promise<TransferConfig> {
     return {
       ...DEFAULT_TRANSFER_CONFIG,
       vehicleTypes: [...DEFAULT_TRANSFER_CONFIG.vehicleTypes],
+      municipioMultipliers: { ...DEFAULT_MUNICIPIO_MULTIPLIERS },
     };
   }
 }
@@ -72,6 +75,10 @@ function mergeConfigWithDefaults(partial: Partial<TransferConfig>): TransferConf
     modifiers: {
       ...DEFAULT_TRANSFER_CONFIG.modifiers,
       ...(partial.modifiers ?? {}),
+    },
+    municipioMultipliers: {
+      ...DEFAULT_MUNICIPIO_MULTIPLIERS,
+      ...(partial.municipioMultipliers ?? {}),
     },
   };
 }
@@ -179,6 +186,15 @@ export async function deleteZone(config: TransferConfig, zoneKey: string): Promi
   const updated = {
     ...config,
     zones: zones.filter((z) => z.key !== zoneKey),
+  };
+  await saveTransferConfig(updated);
+  return updated;
+}
+
+export async function updateMunicipioPriceMultipliers(config: TransferConfig, newMultipliers: Record<string, number>): Promise<TransferConfig> {
+  const updated = {
+    ...config,
+    municipioMultipliers: newMultipliers,
   };
   await saveTransferConfig(updated);
   return updated;

@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl';
 import { getTransferConfig } from '../services/transferConfigService';
 import { calculateDistancePrice } from '../services/transferPricingEngine';
 import { getRouteBetweenPoints } from '../services/routingService';
+import { detectMunicipio } from '../services/municipioService';
 import { TransferConfig, TransferFormData, TransferPriceResult } from '../types/transport';
 import { useI18n } from '../contexts/I18nContext';
 import { useBrand } from '../contexts/BrandContext';
@@ -158,7 +159,9 @@ const Transport: React.FC = () => {
 
     const details = [
       `${locale === 'es' ? 'Desde' : 'From'}: ${priceResult.originLabel}`,
+      ...(priceResult.originMunicipio ? [`${locale === 'es' ? 'Municipio origen' : 'Origin municipio'}: ${priceResult.originMunicipio}`] : []),
       `${locale === 'es' ? 'Hasta' : 'To'}: ${priceResult.destinationLabel}`,
+      ...(priceResult.destinationMunicipio ? [`${locale === 'es' ? 'Municipio destino' : 'Destination municipio'}: ${priceResult.destinationMunicipio}`] : []),
       `${locale === 'es' ? 'Vehículo' : 'Vehicle'}: ${priceResult.vehicleLabel}`,
       `${locale === 'es' ? 'Pasajeros' : 'Passengers'}: ${form.passengers}`,
       `${locale === 'es' ? 'Tipo' : 'Trip'}: ${tripType === 'round-trip' ? (locale === 'es' ? 'Ida y Vuelta' : 'Round Trip') : (locale === 'es' ? 'Solo Ida' : 'One Way')}`,
@@ -220,11 +223,27 @@ const Transport: React.FC = () => {
   const handleOriginSelect = useCallback((place: { placeId: string; address: string; lat: number; lng: number }) => {
     setOriginAddress(place.address);
     setOriginLatLng({ lat: place.lat, lng: place.lng });
+    
+    // Detect municipio from coordinates
+    (async () => {
+      const municipio = await detectMunicipio(place.lat, place.lng);
+      if (municipio) {
+        setForm((prev) => ({ ...prev, originMunicipio: municipio }));
+      }
+    })();
   }, []);
 
   const handleDestSelect = useCallback((place: { placeId: string; address: string; lat: number; lng: number }) => {
     setDestAddress(place.address);
     setDestLatLng({ lat: place.lat, lng: place.lng });
+    
+    // Detect municipio from coordinates
+    (async () => {
+      const municipio = await detectMunicipio(place.lat, place.lng);
+      if (municipio) {
+        setForm((prev) => ({ ...prev, destinationMunicipio: municipio }));
+      }
+    })();
   }, []);
 
   if (loading) {
@@ -571,10 +590,22 @@ const Transport: React.FC = () => {
                           <span><FormattedMessage id="transport.origin" defaultMessage="From" /></span>
                           <span className="font-medium">{priceResult.originLabel}</span>
                         </div>
+                        {priceResult.originMunicipio && (
+                          <div className="flex justify-between">
+                            <span>📍 <FormattedMessage id="transport.originMunicipio" defaultMessage="Origin municipio" /></span>
+                            <span className="font-medium">{priceResult.originMunicipio}</span>
+                          </div>
+                        )}
                         <div className="flex justify-between">
                           <span><FormattedMessage id="transport.destination" defaultMessage="To" /></span>
                           <span className="font-medium">{priceResult.destinationLabel}</span>
                         </div>
+                        {priceResult.destinationMunicipio && (
+                          <div className="flex justify-between">
+                            <span>📍 <FormattedMessage id="transport.destMunicipio" defaultMessage="Destination municipio" /></span>
+                            <span className="font-medium">{priceResult.destinationMunicipio}</span>
+                          </div>
+                        )}
                         <div className="flex justify-between">
                           <span><FormattedMessage id="transport.vehicle" defaultMessage="Vehicle" /></span>
                           <span className="font-medium">{priceResult.vehicleLabel}</span>
@@ -593,6 +624,12 @@ const Transport: React.FC = () => {
                           <div className="flex justify-between">
                             <span>🕒 <FormattedMessage id="transport.duration" defaultMessage="Estimated travel time" /></span>
                             <span className="font-medium">{formatDuration(priceResult.durationMinutes)}</span>
+                          </div>
+                        )}
+                        {priceResult.breakdown.municipioMultiplierApplied && priceResult.breakdown.municipioMultiplierApplied !== 1.0 && (
+                          <div className="flex justify-between text-teal-700">
+                            <span>🏘️ <FormattedMessage id="transport.municipioMultiplier" defaultMessage="Municipio multiplier" /></span>
+                            <span className="font-medium">{priceResult.breakdown.municipioMultiplierApplied.toFixed(2)}×</span>
                           </div>
                         )}
                         {routeGeometry && (

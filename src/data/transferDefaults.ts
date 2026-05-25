@@ -1,4 +1,5 @@
 import { TransferConfig } from '../types/transport';
+import { DEFAULT_MUNICIPIO_MULTIPLIERS } from './municipioPriceMultipliers';
 
 const VEHICLE_TYPES: TransferConfig['vehicleTypes'] = [
   { key: 'sedan', label: 'Economy Sedan', multiplier: 1.0, pricePerKmMultiplier: 1.0, passengerThreshold: 4, passengerMultiplier: 2, maxPassengers: 3, typicalPassengers: [1, 2], description: 'Perfect for 1–2 travelers with light luggage', image: '' },
@@ -29,4 +30,5 @@ export const DEFAULT_TRANSFER_CONFIG: TransferConfig = {
     distanceDiscountMaxPercent: 26.9,
     distanceDiscountSaturationKm: 30,
   },
+  municipioMultipliers: DEFAULT_MUNICIPIO_MULTIPLIERS,
 };

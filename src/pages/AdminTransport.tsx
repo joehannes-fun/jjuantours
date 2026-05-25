@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useI18n } from '../contexts/I18nContext';
 import ServiceAdminPanel from '../components/admin/ServiceAdminPanel';
 import TransferConfigAdminPanel from '../components/admin/TransferConfigAdminPanel';
+import MunicipioPriceAdminPanel from '../components/admin/MunicipioPriceAdminPanel';
 import { getTransportServices, saveTransportServices, Tour } from '../services/toursService';
 
 const AdminTransport: React.FC = () => {
@@ -17,6 +18,7 @@ const AdminTransport: React.FC = () => {
     <div className="min-h-screen bg-slate-100 py-8">
       <div className="container mx-auto px-4 space-y-8">
         <TransferConfigAdminPanel />
+        <MunicipioPriceAdminPanel />
         <ServiceAdminPanel
           title="Transport Admin"
           category="transport"

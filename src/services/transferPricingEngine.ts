@@ -1,4 +1,5 @@
 import { TransferConfig, TransferFormData, TransferPriceResult } from '../types/transport';
+import { getMunicipioPriceMultiplier } from '../data/municipioPriceMultipliers';
 
 export function calculateDistancePrice(
   config: TransferConfig,
@@ -12,7 +13,17 @@ export function calculateDistancePrice(
   if (!vehicleData) throw new Error(`Unknown vehicle type: ${data.vehicleKey}`);
 
   const { modifiers } = config;
-  const pricePerKm = modifiers.pricePerKm * (vehicleData.pricePerKmMultiplier ?? 1);
+  
+  // Calculate municipio multiplier if municipios are available
+  let municipioMultiplierApplied = 1.0;
+  if (data.originMunicipio && data.destinationMunicipio) {
+    const originMultiplier = getMunicipioPriceMultiplier(data.originMunicipio);
+    const destinationMultiplier = getMunicipioPriceMultiplier(data.destinationMunicipio);
+    // Average of the two municipio multipliers
+    municipioMultiplierApplied = (originMultiplier + destinationMultiplier) / 2;
+  }
+  
+  const pricePerKm = modifiers.pricePerKm * (vehicleData.pricePerKmMultiplier ?? 1) * municipioMultiplierApplied;
   const baseDistancePrice = pricePerKm * distanceKm;
 
   const maxDiscount = modifiers.distanceDiscountMaxPercent;
@@ -63,9 +74,11 @@ export function calculateDistancePrice(
     currency: config.currency,
     distanceKm,
     durationMinutes,
+    originMunicipio: data.originMunicipio,
+    destinationMunicipio: data.destinationMunicipio,
     breakdown: {
       distanceKm,
-      pricePerKm,
+      pricePerKm: Math.round(pricePerKm * 100) / 100,
       baseDistancePrice: Math.round(baseDistancePrice * 100) / 100,
       discountAmount,
       finalDistancePrice: Math.round(discountedDistancePrice * 100) / 100,
@@ -80,6 +93,7 @@ export function calculateDistancePrice(
       distanceDiscountSaturationKm: saturationKm,
       markupApplied: modifiers.priceMarkup,
       minimumPriceApplied,
+      municipioMultiplierApplied,
     },
   };
 }
