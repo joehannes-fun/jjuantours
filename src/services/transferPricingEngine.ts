@@ -1,5 +1,5 @@
 import { TransferConfig, TransferFormData, TransferPriceResult } from '../types/transport';
-import { getMunicipioPriceMultiplier } from '../data/municipioPriceMultipliers';
+import { DEFAULT_MUNICIPIO_MULTIPLIERS } from '../data/municipioPriceMultipliers';
 
 export function calculateDistancePrice(
   config: TransferConfig,
@@ -13,13 +13,12 @@ export function calculateDistancePrice(
   if (!vehicleData) throw new Error(`Unknown vehicle type: ${data.vehicleKey}`);
 
   const { modifiers } = config;
+  const municipioMultipliers = modifiers.municipioMultipliers ?? DEFAULT_MUNICIPIO_MULTIPLIERS;
   
-  // Calculate municipio multiplier if municipios are available
   let municipioMultiplierApplied = 1.0;
   if (data.originMunicipio && data.destinationMunicipio) {
-    const originMultiplier = getMunicipioPriceMultiplier(data.originMunicipio);
-    const destinationMultiplier = getMunicipioPriceMultiplier(data.destinationMunicipio);
-    // Average of the two municipio multipliers
+    const originMultiplier = municipioMultipliers[data.originMunicipio] ?? 1.0;
+    const destinationMultiplier = municipioMultipliers[data.destinationMunicipio] ?? 1.0;
     municipioMultiplierApplied = (originMultiplier + destinationMultiplier) / 2;
   }
   

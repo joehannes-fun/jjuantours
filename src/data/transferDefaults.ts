@@ -29,6 +29,6 @@ export const DEFAULT_TRANSFER_CONFIG: TransferConfig = {
     priceMarkup: 1.3,
     distanceDiscountMaxPercent: 26.9,
     distanceDiscountSaturationKm: 30,
+    municipioMultipliers: DEFAULT_MUNICIPIO_MULTIPLIERS,
   },
-  municipioMultipliers: DEFAULT_MUNICIPIO_MULTIPLIERS,
 };

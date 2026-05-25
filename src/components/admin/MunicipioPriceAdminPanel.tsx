@@ -14,7 +14,7 @@ const MunicipioPriceAdminPanel: React.FC = () => {
     const load = async () => {
       const transferConfig = await getTransferConfig();
       setConfig(transferConfig);
-      setDraftMultipliers({ ...transferConfig.municipioMultipliers });
+      setDraftMultipliers({ ...transferConfig.modifiers?.municipioMultipliers ?? {} });
     };
 
     load();
@@ -35,7 +35,7 @@ const MunicipioPriceAdminPanel: React.FC = () => {
     try {
       const updatedConfig = await updateMunicipioPriceMultipliers(config, draftMultipliers);
       setConfig(updatedConfig);
-      setDraftMultipliers({ ...updatedConfig.municipioMultipliers });
+      setDraftMultipliers({ ...updatedConfig.modifiers?.municipioMultipliers ?? {} });
       setMessage('Saved municipio price multipliers.');
     } catch (error) {
       console.error(error);
@@ -48,7 +48,7 @@ const MunicipioPriceAdminPanel: React.FC = () => {
   const handleResetAll = () => {
     if (confirm('Reset all municipio multipliers to defaults?')) {
       const defaults = getAllMunicipios().reduce((acc, municipio) => {
-        acc[municipio] = config?.municipioMultipliers?.[municipio] ?? 1.0;
+        acc[municipio] = config?.modifiers?.municipioMultipliers?.[municipio] ?? 1.0;
         return acc;
       }, {} as Record<string, number>);
       setDraftMultipliers(defaults);

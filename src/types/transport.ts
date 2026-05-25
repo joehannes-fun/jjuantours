@@ -33,6 +33,7 @@ export interface Modifiers {
   priceMarkup: number;
   distanceDiscountMaxPercent: number;
   distanceDiscountSaturationKm: number;
+  municipioMultipliers?: Record<string, number>;
 }
 
 export interface TransferConfig {
@@ -41,7 +42,6 @@ export interface TransferConfig {
   vehicleTypes: VehicleType[];
   zones?: ZoneData[];
   modifiers: Modifiers;
-  municipioMultipliers?: Record<string, number>;
 }
 
 export interface TransferFormData {
