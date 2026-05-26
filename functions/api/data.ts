@@ -9,7 +9,6 @@ const RESOURCE_WITH_LOCALE = new Set([
   'story-elements',
   'intro-story',
   'translations',
-  'transfer-config',
 ]);
 
 const readLocalJson = async (key: string): Promise<unknown | null> => {
