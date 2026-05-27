@@ -4,8 +4,8 @@ pages_build_output_dir = "dist"
 
 [[kv_namespaces]]
 binding = "DATA_KV"
-id = ""
-preview_id = ""
+id = "dummy"
+preview_id = "dummy"
 
 # ==============================================================================
 # Environment variables (Cloudflare Pages dashboard overrides these in production)
