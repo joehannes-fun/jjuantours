@@ -48,11 +48,15 @@ export async function detectMunicipio(lat: number, lng: number): Promise<string 
     }
 
     // Try to extract municipio from various possible fields
+    // Priority: municipality (admin boundary) > city > town > county
+    // This is important because for places like Punta Cana Airport (PUJ),
+    // Nominatim returns city="Punta Cana" but municipality="Higüey" — we
+    // want the actual administrative municipio (Higüey) for pricing.
     const address = data.address;
     let candidateMunicipio = 
+      address.municipality || 
       address.city || 
       address.town || 
-      address.municipality || 
       address.county;
 
     if (!candidateMunicipio) {
