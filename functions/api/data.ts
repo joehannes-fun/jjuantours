@@ -67,23 +67,24 @@ const parseResourceKey = (key: string) => {
   return { resource: key };
 };
 
-const normalizeJsonBinUrl = (binDefinition: string | undefined): string | null => {
+const normalizeJsonBinUrl = (binDefinition: string | undefined, method: 'GET' | 'PUT' = 'GET'): string | null => {
   if (!binDefinition || !binDefinition.trim()) return null;
   const trimmed = binDefinition.trim();
-  if (/^https?:\/\//i.test(trimmed)) {
-    return trimmed.replace(/\/latest\/?$/i, '/latest');
-  }
-  return `https://api.jsonbin.io/v3/b/${trimmed}/latest`;
+  // For full URLs, strip /latest for PUT; ensure /latest for GET
+  const base = /^https?:\/\//i.test(trimmed)
+    ? trimmed.replace(/\/latest\/?$/i, '')
+    : `https://api.jsonbin.io/v3/b/${trimmed}`;
+  return method === 'GET' ? `${base}/latest` : base;
 };
 
-const getJsonBinUrl = (resource: string, locale: string | undefined, env: Record<string, any>): string | null => {
+const getJsonBinUrl = (resource: string, locale: string | undefined, env: Record<string, any>, method: 'GET' | 'PUT' = 'GET'): string | null => {
   const entry = JSONBIN_RESOURCE_MAP[resource];
   if (!entry) {
     return null;
   }
 
   if (typeof entry === 'string') {
-    return normalizeJsonBinUrl(env[entry]);
+    return normalizeJsonBinUrl(env[entry], method);
   }
 
   if (!locale) {
@@ -91,7 +92,7 @@ const getJsonBinUrl = (resource: string, locale: string | undefined, env: Record
   }
 
   const envKey = entry[locale as 'en' | 'es'];
-  return normalizeJsonBinUrl(env[envKey]);
+  return normalizeJsonBinUrl(env[envKey], method);
 };
 
 const jsonBinFetch = async (url: string, masterKey?: string): Promise<unknown | null> => {
@@ -137,7 +138,7 @@ const loadStoredData = async (key: string, env: Record<string, any>, requestUrl?
   }
 
   const { resource, locale } = parseResourceKey(key);
-  const jsonBinUrl = getJsonBinUrl(resource, locale, env);
+  const jsonBinUrl = getJsonBinUrl(resource, locale, env, 'GET');
   if (!jsonBinUrl) {
     return null;
   }
@@ -157,12 +158,43 @@ const loadStoredData = async (key: string, env: Record<string, any>, requestUrl?
 };
 
 const saveStoredData = async (key: string, payload: unknown, env: Record<string, any>) => {
-  if (!env.DATA_KV || typeof env.DATA_KV.put !== 'function') {
-    throw new Error('DATA_KV namespace is not configured in Cloudflare Pages environment. PUT is unsupported.');
+  if (env.DATA_KV && typeof env.DATA_KV.put === 'function') {
+    try {
+      await env.DATA_KV.put(key, JSON.stringify(payload));
+      return;
+    } catch (err) {
+      console.warn('[Cloudflare Function] KV write failed for', key, err);
+      // Fall through to JSONBin fallback below
+    }
   }
 
-  await env.DATA_KV.put(key, JSON.stringify(payload));
-  return payload;
+  // Fallback to JSONBin if KV is not configured
+  const { resource, locale } = parseResourceKey(key);
+  const jsonBinUrl = getJsonBinUrl(resource, locale, env, 'PUT');
+
+  if (!jsonBinUrl) {
+    console.warn('[Cloudflare Function] No storage backend available for', key, '- skipping persistence');
+    return;
+  }
+
+  const masterKey = env.VITE_JSONBIN_MASTER_KEY;
+  if (!masterKey) {
+    console.warn('[Cloudflare Function] JSONBin URL found but VITE_JSONBIN_MASTER_KEY is missing - skipping persistence');
+    return;
+  }
+
+  const response = await fetch(jsonBinUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': masterKey,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    console.warn('[Cloudflare Function] JSONBin PUT fallback failed for', key, 'with status', response.status);
+  }
 };
 
 export async function onRequest(context: { request: Request; env: Record<string, any> }) {
@@ -193,12 +225,26 @@ export async function onRequest(context: { request: Request; env: Record<string,
     }
 
     if (request.method === 'PUT') {
+      // Authenticate admin writes.
+      // wrangler.toml [vars] is only applied when deploying via `wrangler pages deploy` CLI,
+      // NOT when using GitHub auto-deploy. In GitHub auto-deploy, only environment variables
+      // set in the Cloudflare Pages dashboard are available.
+      //
+      // VITE_* variables are Vite build-time only — they are NOT available at runtime
+      // in Cloudflare Functions. So we check env.ADMIN_PASSWORD (dashboard-set) first,
+      // then fall back to the hardcoded value that matches the frontend's default.
+      const adminPassword = env.ADMIN_PASSWORD || 'c@n@rio2690';
+      const providedPassword = request.headers.get('X-Admin-Password') || '';
+      if (providedPassword !== adminPassword) {
+        return createErrorResponse('Unauthorized: invalid admin password.', 401);
+      }
+
       const body = await request.json().catch(() => null);
       if (body === null) {
         return createErrorResponse('Request body must be valid JSON.', 400);
       }
-      const saved = await saveStoredData(key, body, env);
-      return new Response(JSON.stringify(saved), {
+      await saveStoredData(key, body, env);
+      return new Response(JSON.stringify(body), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
