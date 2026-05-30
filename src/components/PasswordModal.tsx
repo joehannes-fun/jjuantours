@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { setAdminPassword } from '../services/authStore';
 
 interface PasswordModalProps {
   onAuthenticate: (isAuthenticated: boolean) => void;
@@ -13,6 +14,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ onAuthenticate }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
+      setAdminPassword(password);
       onAuthenticate(true);
     } else {
       setError('Incorrect password');

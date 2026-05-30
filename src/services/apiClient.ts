@@ -1,3 +1,5 @@
+import { getAdminPassword } from './authStore';
+
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || '';
 const API_BASE_URL = rawBaseUrl.replace(/\/+$|^\s+|\s+$/g, '');
 const DEFAULT_API_PATH = '/api/data';
@@ -56,5 +58,11 @@ const apiFetch = async <T>(resource: string, params?: Record<string, string | nu
 export const apiGet = async <T>(resource: string, params?: Record<string, string | number | boolean>): Promise<T> =>
   apiFetch<T>(resource, params, { method: 'GET' });
 
-export const apiPut = async <T>(resource: string, body: unknown, params?: Record<string, string | number | boolean>): Promise<T> =>
-  apiFetch<T>(resource, params, { method: 'PUT', body: JSON.stringify(body) });
+export const apiPut = async <T>(resource: string, body: unknown, params?: Record<string, string | number | boolean>): Promise<T> => {
+  const password = getAdminPassword();
+  return apiFetch<T>(resource, params, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+    headers: password ? { 'X-Admin-Password': password } : undefined,
+  });
+};
