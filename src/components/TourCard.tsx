@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { generateWhatsAppMessage } from '../utils/whatsapp';
 import { useBrand } from '../contexts/BrandContext';
 import { PricingOption } from '../services/toursService';
+import MarkdownRenderer from './ui/MarkdownRenderer';
 
 interface TourCardProps {
   image: string;
@@ -124,7 +125,7 @@ const TourCard: React.FC<TourCardProps> = ({
             </Link>
           )}
         </div>
-        <p className="leading-relaxed text-slate-600">{description}</p>
+        <MarkdownRenderer content={description} />
 
         {showPrice && (
           <div className="flex flex-wrap gap-2">

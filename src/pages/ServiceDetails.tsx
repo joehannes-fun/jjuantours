@@ -8,6 +8,7 @@ import { generateWhatsAppMessage } from '../utils/whatsapp';
 import { getTransferConfig } from '../services/transferConfigService';
 import { calculateDistancePrice } from '../services/transferPricingEngine';
 import type { TransferConfig, TransferFormData, TransferPriceResult } from '../types/transport';
+import MarkdownRenderer from '../components/ui/MarkdownRenderer';
 
 const ServiceDetails: React.FC = () => {
   const { locale } = useI18n();
@@ -194,7 +195,9 @@ const ServiceDetails: React.FC = () => {
             <img src={currentImage} alt={service.title} className="h-[420px] w-full object-cover" />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent p-8 text-white">
               <h1 className="text-4xl font-bold md:text-5xl">{service.title}</h1>
-              <p className="mt-3 max-w-3xl text-white/80">{service.description}</p>
+              <div className="mt-3 max-w-3xl text-white/80">
+                <MarkdownRenderer content={service.description} />
+              </div>
             </div>
           </div>
 
@@ -365,7 +368,7 @@ const ServiceDetails: React.FC = () => {
               <h2 className="mb-4 text-2xl font-bold text-slate-900">
                 <FormattedMessage id="details.description" defaultMessage="Description" />
               </h2>
-              <p className="leading-8 text-slate-600">{service.details.description}</p>
+              <MarkdownRenderer content={service.details.description} />
             </section>
           </div>
         </article>
