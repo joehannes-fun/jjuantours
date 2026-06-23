@@ -36,7 +36,7 @@ VITE_CLOUDINARY_API_SECRET = "stWvhkCOQi_2Q_Ko0d1it8LXWr8"
 VITE_CLOUDINARY_UPLOAD_PRESET =""
 
 [[env.production.kv_namespaces]]
-binding = "DATA_KV_F"
+binding = "DATA_KV_M"
 id = "47b690e5db594d6a9638e793da63e631"
 
 [env.production.vars]
