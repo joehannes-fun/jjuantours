@@ -1,7 +1,10 @@
-const CANONICAL_HOST = 'ferreras.tours';
+const CANONICAL_HOST = "mario.tours";
 const REDIRECT_STATUS = 301; // Permanent redirect for SEO
 
-export async function onRequest(context: { request: Request; next: () => Promise<Response> }) {
+export async function onRequest(context: {
+  request: Request;
+  next: () => Promise<Response>;
+}) {
   const { request, next } = context;
   const url = new URL(request.url);
   const host = url.hostname;
