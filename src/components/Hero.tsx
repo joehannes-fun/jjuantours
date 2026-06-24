@@ -32,8 +32,8 @@ const Hero: React.FC<HeroProps> = ({ backgroundImage, backgroundVideo }) => {
           aria-hidden="true"
         />
       )}
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(120deg,rgba(6,33,50,.82),rgba(10,97,117,.52)_46%,rgba(237,163,79,.32))]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_18%,rgba(255,255,255,.26),transparent_22%),radial-gradient(circle_at_88%_80%,rgba(20,184,166,.28),transparent_30%)]" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(120deg,rgba(6,33,50,.62),rgba(10,97,117,.32)_46%,rgba(237,163,79,.22))]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_18%,rgba(255,255,255,.18),transparent_22%),radial-gradient(circle_at_88%_80%,rgba(20,184,166,.18),transparent_30%)]" />
 
       <div className="section-shell flex min-h-[86vh] items-center py-24 md:py-28">
         <div className="hero-glass max-w-3xl p-7 md:p-12">
