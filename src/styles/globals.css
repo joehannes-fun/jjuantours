@@ -1,0 +1,295 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Italiana&display=swap');
+
+:root {
+  --chakra-colors-brand-50: #f0fdfa;
+  --chakra-colors-brand-100: #ccfbf1;
+  --chakra-colors-brand-200: #99f6e4;
+  --chakra-colors-brand-300: #5eead4;
+  --chakra-colors-brand-400: #2dd4bf;
+  --chakra-colors-brand-500: #14b8a6;
+  --chakra-colors-brand-600: #0d9488;
+  --chakra-colors-brand-700: #0f766e;
+  --chakra-colors-brand-800: #115e59;
+  --chakra-colors-brand-900: #134e4a;
+  
+  --chakra-colors-flame-50: #fff7ed;
+  --chakra-colors-flame-100: #ffedd5;
+  --chakra-colors-flame-200: #fed7aa;
+  --chakra-colors-flame-300: #fdba74;
+  --chakra-colors-flame-400: #fb923c;
+  --chakra-colors-flame-500: #f97316;
+  --chakra-colors-flame-600: #ea580c;
+  --chakra-colors-flame-700: #c2410c;
+  --chakra-colors-flame-800: #9a3412;
+  --chakra-colors-flame-900: #7c2d12;
+  
+  --chakra-colors-deep-50: #f8fafc;
+  --chakra-colors-deep-100: #f1f5f9;
+  --chakra-colors-deep-200: #e2e8f0;
+  --chakra-colors-deep-300: #cbd5e1;
+  --chakra-colors-deep-400: #94a3b8;
+  --chakra-colors-deep-500: #64748b;
+  --chakra-colors-deep-600: #475569;
+  --chakra-colors-deep-700: #334155;
+  --chakra-colors-deep-800: #1e293b;
+  --chakra-colors-deep-900: #0f172a;
+  
+  --chakra-colors-neon-50: #f0fdf4;
+  --chakra-colors-neon-100: #dcfce7;
+  --chakra-colors-neon-200: #bbf7d0;
+  --chakra-colors-neon-300: #86efac;
+  --chakra-colors-neon-400: #4ade80;
+  --chakra-colors-neon-500: #22c55e;
+  --chakra-colors-neon-600: #16a34a;
+  --chakra-colors-neon-700: #15803d;
+  --chakra-colors-neon-800: #166534;
+  --chakra-colors-neon-900: #14532d;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+html {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Outfit", system-ui, -apple-system, sans-serif;
+  color: var(--chakra-colors-deep-100);
+  background-image: 
+    radial-gradient(ellipse at 15% 25%, rgba(249, 115, 22, 0.15), transparent 40%),
+    radial-gradient(ellipse at 85% 35%, rgba(20, 184, 166, 0.12), transparent 45%),
+    radial-gradient(ellipse at 50% 75%, rgba(34, 197, 94, 0.08), transparent 50%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: -0.03em;
+  color: var(--chakra-colors-deep-50);
+  font-weight: 700;
+}
+
+.accent-text {
+  font-family: "Italiana", serif;
+  font-weight: 400;
+}
+
+a {
+  color: var(--chakra-colors-brand-300);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--chakra-colors-flame-400);
+  text-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+}
+
+button {
+  border-radius: var(--chakra-radii-2xl);
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--chakra-colors-deep-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--chakra-colors-brand-500), var(--chakra-colors-flame-500));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--chakra-colors-brand-400), var(--chakra-colors-flame-400));
+}
+
+/* Glass morphism effect - Dark variant */
+.glass {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--chakra-colors-brand-400), var(--chakra-colors-flame-400), var(--chakra-colors-neon-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradientShift 5s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.gradient-text-fire {
+  background: linear-gradient(135deg, var(--chakra-colors-flame-300), var(--chakra-colors-flame-500), var(--chakra-colors-brand-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card styles - Dark theme */
+.adventure-card {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: var(--chakra-radii-3xl);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.adventure-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(249, 115, 22, 0.3);
+  box-shadow: 
+    0 20px 48px rgba(249, 115, 22, 0.15),
+    0 0 80px rgba(20, 184, 166, 0.1);
+}
+
+/* Button variants - Bold & Modern */
+.btn-primary {
+  background: linear-gradient(135deg, var(--chakra-colors-flame-500), var(--chakra-colors-flame-600));
+  color: white;
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--chakra-colors-flame-400), var(--chakra-colors-flame-500));
+  box-shadow: 0 8px 32px rgba(249, 115, 22, 0.5);
+  transform: translateY(-3px);
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, var(--chakra-colors-brand-500), var(--chakra-colors-brand-600));
+  color: white;
+  box-shadow: 0 4px 20px rgba(20, 184, 166, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-accent:hover {
+  background: linear-gradient(135deg, var(--chakra-colors-brand-400), var(--chakra-colors-brand-500));
+  box-shadow: 0 8px 32px rgba(20, 184, 166, 0.5);
+  transform: translateY(-3px);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--chakra-colors-brand-500);
+  color: var(--chakra-colors-brand-400);
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: rgba(20, 184, 166, 0.1);
+  border-color: var(--chakra-colors-brand-400);
+  color: var(--chakra-colors-brand-300);
+  transform: translateY(-2px);
+}
+
+/* Section backgrounds - Dark adventurous themes */
+.section-hero {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+}
+
+.section-flame {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(234, 88, 12, 0.1));
+}
+
+.section-brand {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(13, 148, 136, 0.15));
+}
+
+.section-neon {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(22, 163, 74, 0.1));
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-15px) rotate(2deg);
+  }
+  66% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+}
+
+.float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Glow effects - Neon style */
+.glow-flame {
+  box-shadow: 0 0 50px rgba(249, 115, 22, 0.4);
+}
+
+.glow-brand {
+  box-shadow: 0 0 50px rgba(20, 184, 166, 0.4);
+}
+
+.glow-neon {
+  box-shadow: 0 0 50px rgba(34, 197, 94, 0.4);
+}
+
+/* Decorative elements */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.blob-flame {
+  background: var(--chakra-colors-flame-500);
+}
+
+.blob-brand {
+  background: var(--chakra-colors-brand-500);
+}
+
+.blob-neon {
+  background: var(--chakra-colors-neon-500);
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
