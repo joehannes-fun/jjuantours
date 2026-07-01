@@ -1,23 +1,20 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&family=Raleway:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Dancing+Script:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Abril+Fatface&family=Josefin+Sans:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --caribbean-rum: #8b4513;
-  --tobacco-leaf: #6b5d2e;
-  --sunset-coral: #ff6b4a;
-  --ocean-deep: #006994;
-  --turquoise-bay: #40e0d0;
-  --sand-gold: #f4c430;
-  --palm-green: #2d5016;
-  --western-bronze: #cd7f32;
-  --dominican-amber: #ffbf00;
-  --tropical-light: #fff8f0;
-  --tropical-cream: #ffefeb;
-  --tropical-peach: #ffe5d9;
-  --card: rgba(255, 253, 240, 0.92);
+  --azure-coast: #0077b6;
+  --turquoise-dream: #00b4d8;
+  --coral-reef: #ff6b6b;
+  --sunset-orange: #fca311;
+  --sand-beige: #fefae0;
+  --palm-green: #606c38;
+  --deep-ocean: #03045e;
+  --foam-white: #caf0f8;
+  --tropical-coral: #ffb4a2;
+  --golden-hour: #ffc300;
 }
 
 * {
@@ -25,35 +22,34 @@
 }
 
 html {
-  background: linear-gradient(180deg, #fff8f0 0%, #ffefeb 30%, #ffe5d9 60%, #e8f4f8 100%);
+  background: linear-gradient(180deg, #caf0f8 0%, #fefae0 40%, #ffb4a2 100%);
 }
 
 body {
   min-height: 100vh;
-  font-family: "Inter", "Raleway", sans-serif;
-  color: #2c1810;
+  font-family: "Plus Jakarta Sans", "Nunito", sans-serif;
+  color: #03045e;
   background-image:
     radial-gradient(
-      ellipse at 20% 20%,
-      rgba(255, 107, 74, 0.08),
-      transparent 35%
-    ),
-    radial-gradient(
-      ellipse at 80% 30%,
-      rgba(64, 224, 208, 0.1),
+      ellipse at 15% 25%,
+      rgba(0, 180, 216, 0.15),
       transparent 40%
     ),
     radial-gradient(
-      ellipse at 50% 80%,
-      rgba(244, 196, 48, 0.06),
+      ellipse at 85% 35%,
+      rgba(255, 107, 107, 0.12),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 50% 75%,
+      rgba(252, 163, 17, 0.1),
       transparent 50%
     ),
     linear-gradient(
       180deg,
-      rgba(255, 248, 240, 1) 0%,
-      rgba(255, 239, 235, 1) 30%,
-      rgba(255, 229, 217, 1) 60%,
-      rgba(232, 244, 248, 1) 100%
+      rgba(202, 240, 248, 1) 0%,
+      rgba(254, 250, 224, 1) 40%,
+      rgba(255, 180, 162, 1) 100%
     );
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -66,19 +62,19 @@ body::before {
   background-image:
     repeating-linear-gradient(
       45deg,
-      rgba(139, 69, 19, 0.03) 0px,
-      rgba(139, 69, 19, 0.03) 2px,
-      transparent 2px,
-      transparent 8px
+      rgba(0, 119, 182, 0.04) 0px,
+      rgba(0, 119, 182, 0.04) 1px,
+      transparent 1px,
+      transparent 6px
     ),
     repeating-linear-gradient(
       -45deg,
-      rgba(255, 107, 74, 0.025) 0px,
-      rgba(255, 107, 74, 0.025) 2px,
-      transparent 2px,
-      transparent 10px
+      rgba(252, 163, 17, 0.03) 0px,
+      rgba(252, 163, 17, 0.03) 1px,
+      transparent 1px,
+      transparent 8px
     );
-  opacity: 0.6;
+  opacity: 0.5;
   z-index: -1;
   pointer-events: none;
 }
@@ -95,10 +91,10 @@ body::before {
   background-image:
     radial-gradient(
       ellipse at 25% 35%,
-      rgba(255, 191, 0, 0.12),
+      rgba(252, 163, 17, 0.12),
       transparent 28%
     ),
-    radial-gradient(ellipse at 75% 20%, rgba(0, 105, 148, 0.1), transparent 32%);
+    radial-gradient(ellipse at 75% 20%, rgba(0, 119, 182, 0.1), transparent 32%);
   opacity: 0.8;
   pointer-events: none;
 }
@@ -110,25 +106,25 @@ h4,
 h5,
 h6,
 .font-heading {
-  font-family: "Playfair Display", "Cinzel", Georgia, serif;
-  letter-spacing: 0.02em;
-  color: #2c1810;
+  font-family: "Outfit", "Josefin Sans", Georgia, serif;
+  letter-spacing: 0.03em;
+  color: #03045e;
   font-weight: 700;
 }
 
 .font-script {
-  font-family: "Dancing Script", cursive;
+  font-family: "Abril Fatface", cursive;
 }
 
 a {
-  color: var(--ocean-deep);
+  color: var(--azure-coast);
   transition:
     color 0.3s ease,
     transform 0.3s ease;
 }
 
 a:hover {
-  color: var(--sunset-coral);
+  color: var(--coral-reef);
   transform: translateX(3px);
 }
 
@@ -143,8 +139,8 @@ section[style*="background-image"]::after {
   bottom: -1px;
   left: 0;
   width: 100%;
-  height: 80px;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C200,40 400,80 600,60 C800,40 1000,80 1200,60 L1200,120 L0,120 Z' fill='rgba(255,248,231,0.98)'/%3E%3Cpath d='M0,70 C200,50 400,90 600,70 C800,50 1000,90 1200,70 L1200,120 L0,120 Z' fill='rgba(255,239,213,0.6)' opacity='0.4'/%3E%3C/svg%3E")
+  height: 100px;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C150,80 300,40 450,60 C600,80 750,40 900,60 C1050,80 1200,40 1200,60 L1200,120 L0,120 Z' fill='%23caf0f8'/%3E%3Cpath d='M0,70 C150,90 300,50 450,70 C600,90 750,50 900,70 C1050,90 1200,50 1200,70 L1200,120 L0,120 Z' fill='%23fefae0' opacity='0.5'/%3E%3C/svg%3E")
     no-repeat bottom;
   background-size: cover;
   background-position: bottom;
@@ -153,10 +149,10 @@ section[style*="background-image"]::after {
 }
 
 button {
-  border-radius: 12px;
-  font-family: "Montserrat", sans-serif;
+  border-radius: 16px;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .section-shell {
@@ -166,14 +162,14 @@ button {
 .hero-glass {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
-  background: rgba(255, 253, 240, 0.50);
-  border: 2px solid rgba(205, 127, 50, 0.35);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 2px solid rgba(0, 119, 182, 0.25);
   box-shadow:
-    0 32px 80px rgba(139, 69, 19, 0.18),
-    0 8px 24px rgba(255, 107, 74, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(12px) saturate(140%);
+    0 32px 80px rgba(0, 119, 182, 0.15),
+    0 8px 24px rgba(255, 107, 107, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(16px) saturate(150%);
 }
 
 .hero-glass::before {
@@ -183,54 +179,57 @@ button {
   pointer-events: none;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.7),
     transparent 50%
   );
 }
 
 .nav-link-pill {
   @apply flex items-center gap-2 px-5 py-2.5 font-semibold text-slate-800 transition duration-300;
-  border-radius: 10px;
+  border-radius: 9999px;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.6),
-    rgba(255, 248, 231, 0.4)
+    rgba(255, 255, 255, 0.7),
+    rgba(202, 240, 248, 0.5)
   );
-  border: 1.5px solid rgba(205, 127, 50, 0.2);
+  border: 1.5px solid rgba(0, 119, 182, 0.2);
 }
 
 .nav-link-pill:hover {
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 74, 0.15),
-    rgba(244, 196, 48, 0.1)
+    rgba(255, 107, 107, 0.15),
+    rgba(252, 163, 17, 0.1)
   );
-  color: var(--caribbean-rum);
-  border-color: rgba(205, 127, 50, 0.4);
+  color: var(--deep-ocean);
+  border-color: rgba(0, 119, 182, 0.4);
   transform: translateY(-2px);
 }
 
 .menu-logo-icon {
   position: fixed;
   z-index: 9999;
-  box-shadow: 0 8px 32px rgba(139, 69, 19, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 119, 182, 0.2);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(202, 240, 248, 0.8));
+  border: 2px solid rgba(0, 119, 182, 0.15);
 }
 
 .menu-logo-icon:hover {
-  transform: scale(1.5);
-  box-shadow: 0 12px 48px rgba(139, 69, 19, 0.35);
+  transform: scale(1.1);
+  box-shadow: 0 12px 48px rgba(0, 119, 182, 0.3);
 }
 
 .menu-logo-icon img {
-  opacity: 0.75;
-  filter: drop-shadow(0 4px 8px rgba(139, 69, 19, 0.3));
+  opacity: 0.85;
+  filter: drop-shadow(0 4px 8px rgba(0, 119, 182, 0.2));
   transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
 .menu-logo-icon:hover img {
-  opacity: 0.75;
-  filter: drop-shadow(0 8px 16px rgba(139, 69, 19, 0.4));
+  opacity: 0.95;
+  filter: drop-shadow(0 8px 16px rgba(0, 119, 182, 0.3));
 }
 
 .shore-section {
@@ -514,11 +513,11 @@ button {
 }
 
 .tropical-button {
-  @apply inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300;
-  background: linear-gradient(135deg, #ff6b4a 0%, #ff8c42 45%, #ffd700 100%);
-  border-radius: 14px;
+  @apply inline-flex items-center justify-center px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300;
+  background: linear-gradient(135deg, #ff6b6b 0%, #fca311 45%, #ffc300 100%);
+  border-radius: 20px;
   box-shadow:
-    0 16px 40px rgba(255, 107, 74, 0.4),
+    0 16px 40px rgba(255, 107, 107, 0.4),
     0 6px 16px rgba(0, 0, 0, 0.15);
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
@@ -526,27 +525,27 @@ button {
 .tropical-button:hover {
   transform: translateY(-4px) scale(1.03);
   box-shadow:
-    0 24px 56px rgba(255, 107, 74, 0.5),
+    0 24px 56px rgba(255, 107, 107, 0.5),
     0 8px 20px rgba(0, 0, 0, 0.18);
 }
 
 .tropical-button:active {
   transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 10px 24px rgba(255, 107, 74, 0.35);
+  box-shadow: 0 10px 24px rgba(255, 107, 107, 0.35);
 }
 
 .tropical-button-outline {
-  @apply inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold uppercase tracking-wider transition-all duration-300;
-  background: rgba(255, 255, 255, 0.25);
-  border: 2.5px solid rgba(255, 255, 255, 0.85);
-  border-radius: 14px;
-  color: #2c1810;
+  @apply inline-flex items-center justify-center px-8 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-300;
+  background: rgba(255, 255, 255, 0.3);
+  border: 2.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  color: #03045e;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
 }
 
 .tropical-button-outline:hover {
-  background: rgba(255, 255, 255, 0.4);
-  border-color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.98);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
   transform: translateY(-3px);
 }
